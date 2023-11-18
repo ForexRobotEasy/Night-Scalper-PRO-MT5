@@ -1,0 +1,75 @@
+mql5
+//+------------------------------------------------------------------+
+//|                       Night Scalper PRO MT5                        |
+//|                   Developer: Forex Robot Easy Team                 |
+//|                    Website: forexroboteasy.com                     |
+//+------------------------------------------------------------------+
+
+//+------------------------------------------------------------------+
+//|                           Input parameters                        |
+//+------------------------------------------------------------------+
+input string SymbolName = 'EURUSD'; // Symbol name
+input ENUM_TIMEFRAMES TimeFrame = PERIOD_M15; // Timeframe
+input double LotSize = 0.01; // Lot size
+input int MaxSpread = 5; // Maximum allowed spread
+input bool UseNewsFilter = true; // Enable news filter
+
+//+------------------------------------------------------------------+
+//|                      Expert Advisor Start Function                |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+   // Check if it's the end of the day
+   if (IsEndOfDay())
+   {
+      // Get the upper and lower shadow of the daily candle
+      double upperShadow = High[1] - MathMax(Open[1], Close[1]);
+      double lowerShadow = MathMin(Open[1], Close[1]) - Low[1];
+      
+      // Check if the price tends to return to the daily range
+      if (upperShadow > 0 && lowerShadow > 0)
+      {
+         // Check if the spread is within the maximum allowed spread
+         if (SymbolInfoInteger(SymbolName, SYMBOL_SPREAD) <= MaxSpread)
+         {
+            // Check if the news filter is enabled and there are no important news
+            if (!UseNewsFilter || !IsImportantNews())
+            {
+               // Open a trade
+               OpenTrade();
+            }
+         }
+      }
+   }
+}
+
+//+------------------------------------------------------------------+
+//|                       Check if it's end of day                     |
+//+------------------------------------------------------------------+
+bool IsEndOfDay()
+{
+   datetime currentTime = TimeLocal();
+   datetime endOfDay = TimeHour(currentTime) >= 23 ? TimeAdd(TimeCurrent(), PERIOD_D1) : TimeCurrent();
+   return TimeHour(currentTime) >= 23 && TimeHour(endOfDay) == 0;
+}
+
+//+------------------------------------------------------------------+
+//|                  Check if there are important news                 |
+//+------------------------------------------------------------------+
+bool IsImportantNews()
+{
+   // Implement the logic to check for important news here
+   // Return true if there are important news, false otherwise
+   return false;
+}
+
+//+------------------------------------------------------------------+
+//|                          Open a trade                              |
+//+------------------------------------------------------------------+
+void OpenTrade()
+{
+   // Implement the logic to open a trade here
+   // Use the LotSize input parameter as the lot size
+   // Implement necessary stop loss and take profit levels
+}
+
